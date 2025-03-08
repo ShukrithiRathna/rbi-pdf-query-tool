@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)  # Allows frontend to access API
 
 # Load FAISS index
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L12-v1")
 db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
 
 @app.route("/query", methods=["POST"])
