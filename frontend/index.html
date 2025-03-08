@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBI PDF Query</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input, button { padding: 10px; margin: 10px; width: 80%; max-width: 400px; }
+        .results { margin-top: 20px; text-align: left; max-width: 600px; margin: auto; }
+    </style>
+</head>
+<body>
+    <h2>Search RBI Documents</h2>
+    <input type="text" id="query" placeholder="Enter query..." />
+    <button onclick="search()">Search</button>
+    <div class="results" id="results"></div>
+
+    <script>
+        async function search() {
+            let query = document.getElementById("query").value;
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "Searching...";
+    
+            try {
+                let response = await fetch("https://faiss-api.onrender.com/query", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query: query }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error("Server error. Please try again later.");
+                }
+    
+                let data = await response.json();
+                resultsDiv.innerHTML = "";
+    
+                if (data.error) {
+                    resultsDiv.innerHTML = "<p>Error: " + data.error + "</p>";
+                    return;
+                }
+    
+                if (data.length === 0) {
+                    resultsDiv.innerHTML = "<p>No results found.</p>";
+                    return;
+                }
+    
+                data.forEach(res => {
+                    let p = document.createElement("p");
+                    p.textContent = res.content;
+                    resultsDiv.appendChild(p);
+                });
+    
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+    
+</body>
+</html>
