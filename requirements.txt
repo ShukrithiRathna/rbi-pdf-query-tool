@@ -7,3 +7,4 @@ langchain
 sentence-transformers
 PyPDF2
 tqdm
+langchain-community
