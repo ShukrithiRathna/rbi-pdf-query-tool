@@ -8,7 +8,7 @@ CORS(app)  # Allows frontend to access API
 
 # Load FAISS index
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L12-v1")
-db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
+db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True,normalize_L2=True)
 
 @app.route("/query", methods=["POST"])
 def query():
