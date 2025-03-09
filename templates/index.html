@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search RBI Documents</title>
 </head>
+
 <body>
     <h2>Search RBI Documents</h2>
     <input type="text" id="query" placeholder="Enter query..." />
@@ -18,28 +20,32 @@
             resultsDiv.innerHTML = "Searching...";
 
             try {
-                let response = await fetch("/query", {
+                let response = await fetch("http://127.0.0.1:5000/query", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ query: query }),
                 });
 
+                if (!response.ok) throw new Error("Server error. Please try again.");
+
                 let data = await response.json();
                 resultsDiv.innerHTML = "";
 
                 if (data.error) {
-                    resultsDiv.innerHTML = "<p>Error: " + data.error + "</p>";
+                    resultsDiv.innerHTML = `<p>Error: ${data.error}</p>`;
                     return;
                 }
 
-                if (data.results.length === 0) {
+                if (!data.results || data.results.length === 0) {
                     resultsDiv.innerHTML = "<p>No results found.</p>";
                     return;
                 }
 
                 data.results.forEach(res => {
                     let p = document.createElement("p");
-                    p.innerHTML = `<b>Content:</b> ${res.content} <br> <b>Source:</b> ${res.source}`;
+                    p.innerHTML = `<strong>Content:</strong> ${res.content}<br>
+                           <strong>Source:</strong> ${res.source} <br>
+                           <strong>PDF:</strong> <a href="${res.url}" target="_blank">${res.url}</a>`;
                     resultsDiv.appendChild(p);
                 });
 
@@ -47,6 +53,8 @@
                 resultsDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
             }
         }
+
     </script>
 </body>
+
 </html>
